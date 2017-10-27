@@ -4,9 +4,9 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "webpack-dev-server --progress --hot --content-base ./dist --config ./config/webpack.dev.config.js",
+    "start": "webpack-dev-server --progress --hot --content-base ./dist --config ./webpack.dev.config.js",
     "dev": "yarn run start",
-    "build": "NODE_ENV=production webpack -p --config config/webpack.prod.config.js"
+    "build": "NODE_ENV=production webpack -p --config ./webpack.prod.config.js"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
@@ -14,7 +14,11 @@
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-env": "^1.6.1",
     "babel-preset-react": "^6.24.1",
+    "compression-webpack-plugin": "^1.0.1",
+    "css-loader": "^0.28.7",
+    "extract-text-webpack-plugin": "^3.0.2",
     "html-webpack-plugin": "^2.30.1",
+    "style-loader": "^0.19.0",
     "webpack": "^3.8.1",
     "webpack-dev-server": "^2.9.3"
   },
