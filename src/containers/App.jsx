@@ -11,10 +11,29 @@ const updatePeople = dispatch => people => {
   })
 }
 
+const deletePerson = dispatch => name => {
+  dispatch({
+    type: 'REMOVE_PERSON',
+    payload: name,
+  })
+}
+
+const undoChange = dispatch => {
+  dispatch({
+    type: 'UNDO',
+  })
+}
+
+const redoChange = dispatch => {
+  dispatch({
+    type: 'REDO'
+  })
+}
+
 class App extends Component {
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
 
     this.state = {
       filter: '',
@@ -36,7 +55,13 @@ class App extends Component {
 
   render() {
     const { filter } = this.state
-    const { current } = this.props
+    const { current, dispatch } = this.props
+
+    const onDelete = (name) => deletePerson(dispatch)(name)
+
+    const undo = () => undoChange(dispatch)
+
+    const redo = () => redoChange(dispatch)
 
     // console.log(data);
     const inputStyle = {
@@ -53,17 +78,20 @@ class App extends Component {
       }
 
       if (!filter) {
-        return data.map(item => <Card key={item.Id} {...item} />)
+        return data.map(item => <Card key={item.Id} {...item} onDelete={onDelete}/>)
       }
 
       return data
-        // .slice(0, 10)   //take 10
         .filter(item => item.Name.includes(filter))
-        .map(item => <Card key={item.Id} {...item} />)
+        .map(item => <Card key={item.Id} {...item} onDelete={onDelete}/>)
     }
 
     return(
       <div>
+        <div>
+          <button onClick={undo}> Undo &#8635; </button>
+          <button onClick={redo}> Redo &#8634; </button>
+        </div>
         <div style={{ marginBottom: '25px' }}>
           <input
             type="text"
