@@ -1,29 +1,31 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import { ApiService } from '../services/'
 import Card from '../components/Card'
 import data from '../data'
 
-const ApiService = {
-  getData: () => {
-    return new Promise(res => setTimeout(res(data),2000))
-  },
+const updatePeople = dispatch => people => {
+  dispatch({
+    type: 'UPDATE_PEOPLE',
+    payload: people,
+  })
 }
 
-export default class App extends Component {
+class App extends Component {
 
   constructor() {
     super();
 
     this.state = {
-      data: [],
       filter: '',
     }
   }
 
   componentDidMount() {
     ApiService
-      .getData()
-      .then(data => this.setState({ data }))
-      .catch(err => console.err(err))
+      .getPeople()
+      .then(data => updatePeople(this.props.dispatch)(data))
+      .catch(err => console.error(err))
   }
 
   handleChange(evt) {
@@ -33,9 +35,8 @@ export default class App extends Component {
   }
 
   render() {
-    const { data, filter } = this.state
-
-    console.log(filter);
+    const { filter } = this.state
+    const { current } = this.props
 
     // console.log(data);
     const inputStyle = {
@@ -52,13 +53,13 @@ export default class App extends Component {
       }
 
       if (!filter) {
-        return data.map(item => <Card key={item.Name} {...item} />)
+        return data.map(item => <Card key={item.Id} {...item} />)
       }
 
       return data
         // .slice(0, 10)   //take 10
         .filter(item => item.Name.includes(filter))
-        .map(item => <Card key={item.Name} {...item} />)
+        .map(item => <Card key={item.Id} {...item} />)
     }
 
     return(
@@ -72,8 +73,10 @@ export default class App extends Component {
             tabIndex={0}
       />
         </div>
-          {filterView(data, filter)}
+          {filterView(current, filter)}
       </div>
     )
   }
 }
+
+export default connect(({people}) => people)(App)

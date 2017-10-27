@@ -36,6 +36,7 @@ module.exports = {
       }
     ]
   },
+  devtool: 'source-maps',
   plugins: [
     HtmlWebpackPluginConfig,
   ],
