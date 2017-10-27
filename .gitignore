@@ -49,4 +49,8 @@ jspm_packages
 # Yarn Integrity file
 .yarn-integrity
 
+# tern
 .tern-port
+
+# build
+dist/

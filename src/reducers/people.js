@@ -2,6 +2,7 @@ const initialState = {
   past: [],
   current: [],
   future: [],
+  archived: null,
 }
 
 
@@ -30,7 +31,8 @@ export default function reducer(state = initialState, action) {
         current: [
           ...current.slice(0, index),
           ...current.slice(index + 1)
-        ]
+        ],
+        archived: null,
       }
     }
 
@@ -40,21 +42,6 @@ export default function reducer(state = initialState, action) {
         return state
       }
       const person = past[0]
-
-      console.log({
-        ...state,
-        past: [
-          ...past.slice(1)
-        ],
-        current: [
-          person,
-          ...current
-        ],
-        future: [
-          person,
-          ...future,
-        ]
-      });
 
       return {
         ...state,
@@ -80,21 +67,6 @@ export default function reducer(state = initialState, action) {
       const person = future[0]
       const index = current.indexOf(person)
 
-      console.log({
-        ...state,
-        current:[
-          ...current.slice(0, index),
-          ...current.slice(index + 1)
-        ],
-        future: [
-          ...future.slice(1)
-        ],
-        past: [
-          person,
-          ...past,
-        ]
-      });
-
       return {
         ...state,
         current:[
@@ -108,6 +80,30 @@ export default function reducer(state = initialState, action) {
           person,
           ...past,
         ]
+      }
+    }
+
+    case 'ARCHIVE': {
+      const index = current.indexOf(action.payload)
+
+      return {
+        ...state,
+        archived: action.payload,
+        current: [
+          ...current.slice(0, index),
+          ...current.slice(index + 1)
+        ]
+      }
+    }
+
+    case 'REVERT': {
+      return {
+        ...state,
+        current: [
+          state.archived,
+          ...state.current
+        ],
+        archived: null,
       }
     }
 

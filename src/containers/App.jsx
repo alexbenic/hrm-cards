@@ -1,34 +1,10 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { ApiService } from '../services/'
+import * as Action from '../actions'
 import Card from '../components/Card'
 import data from '../data'
 
-const updatePeople = dispatch => people => {
-  dispatch({
-    type: 'UPDATE_PEOPLE',
-    payload: people,
-  })
-}
-
-const deletePerson = dispatch => name => {
-  dispatch({
-    type: 'REMOVE_PERSON',
-    payload: name,
-  })
-}
-
-const undoChange = dispatch => {
-  dispatch({
-    type: 'UNDO',
-  })
-}
-
-const redoChange = dispatch => {
-  dispatch({
-    type: 'REDO'
-  })
-}
 
 class App extends Component {
 
@@ -43,7 +19,7 @@ class App extends Component {
   componentDidMount() {
     ApiService
       .getPeople()
-      .then(data => updatePeople(this.props.dispatch)(data))
+      .then(data => Action.updatePeople(this.props.dispatch)(data))
       .catch(err => console.error(err))
   }
 
@@ -55,15 +31,18 @@ class App extends Component {
 
   render() {
     const { filter } = this.state
-    const { current, dispatch } = this.props
+    const { current, archived, dispatch } = this.props
 
-    const onDelete = (name) => deletePerson(dispatch)(name)
+    const onDelete = (name) => Action.remove(dispatch)(name)
 
-    const undo = () => undoChange(dispatch)
+    const undo = () => Action.undoChange(dispatch)
 
-    const redo = () => redoChange(dispatch)
+    const redo = () => Action.redoChange(dispatch)
 
-    // console.log(data);
+    const cancel = () => Action.cancelDelete(dispatch)
+
+    const remove = (name) => Action.remove(dispatch)(name)
+
     const inputStyle = {
       display: 'block',
       margin: '0 auto',
@@ -88,10 +67,11 @@ class App extends Component {
 
     return(
       <div>
-        <div>
-          <button onClick={undo}> Undo &#8635; </button>
-          <button onClick={redo}> Redo &#8634; </button>
-        </div>
+        {
+          archived
+            ? <button onClick={cancel} > Cancel </button>
+            : null
+        }
         <div style={{ marginBottom: '25px' }}>
           <input
             type="text"
